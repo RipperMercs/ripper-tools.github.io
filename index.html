@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>RIPPER.TOOLS — Free Tools. No Bloat.</title>
+<meta name="description" content="Free developer tools by RipperMercs. No accounts. No telemetry. No BS.">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+::selection{background:#00ff44;color:#000}
+body{
+  background:#06060a;
+  color:#c0c0c0;
+  font-family:'Courier New','Lucida Console','Consolas',monospace;
+  font-size:13px;
+  min-height:100vh;
+  position:relative;
+  overflow-x:hidden;
+}
+a{color:#00aaff;text-decoration:none}
+a:hover{color:#00ff44;text-decoration:underline}
+
+/* CRT Effects */
+.scanline-sweep{
+  position:fixed;top:0;left:0;right:0;height:2px;
+  background:rgba(0,255,68,0.06);
+  animation:scanline 8s linear infinite;
+  pointer-events:none;z-index:100;
+}
+.scanline-static{
+  position:fixed;inset:0;
+  background:repeating-linear-gradient(0deg,transparent,transparent 3px,rgba(0,0,0,0.12) 3px,rgba(0,0,0,0.12) 4px);
+  pointer-events:none;z-index:99;
+}
+.vignette{
+  position:fixed;inset:0;
+  background:radial-gradient(ellipse at center,transparent 50%,rgba(0,0,0,0.5) 100%);
+  pointer-events:none;z-index:98;
+}
+.content{
+  max-width:720px;margin:0 auto;padding:40px 20px 60px;
+  position:relative;z-index:10;
+  animation:flicker 10s infinite;
+}
+
+/* Animations */
+@keyframes scanline{0%{transform:translateY(-100%)}100%{transform:translateY(100vh)}}
+@keyframes flicker{0%,100%{opacity:1}92%{opacity:1}93%{opacity:.8}94%{opacity:1}97%{opacity:.9}98%{opacity:1}}
+@keyframes fadeSlideIn{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+@keyframes glowPulse{0%,100%{text-shadow:0 0 8px #00ff4433}50%{text-shadow:0 0 16px #00ff4455,0 0 32px #00ff4422}}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:0}}
+
+/* Logo */
+.ascii-logo{
+  color:#00ff44;font-size:14px;line-height:1.2;text-align:center;
+  margin-bottom:8px;overflow:hidden;white-space:pre;letter-spacing:1.5px;
+  animation:fadeSlideIn .6s ease both,glowPulse 4s ease infinite;
+}
+.divider{color:#1a1a2e;text-align:center;font-size:11px;overflow:hidden}
+.divider-thin{color:#1a1a2e;text-align:center;font-size:11px;overflow:hidden}
+
+/* Typed line */
+.typed-line{text-align:center;font-size:13px;color:#7a7a8e;min-height:20px;margin-bottom:4px}
+.typed-line .prompt{color:#00ff44}
+.cursor{color:#00ff44;animation:blink 1.06s step-end infinite}
+
+/* Section header */
+.section-hdr{display:flex;align-items:center;gap:12px;margin-bottom:16px}
+.section-hdr .bracket{color:#00ff44;font-size:12px}
+.section-hdr .label{font-size:11px;color:#4a4a5e;text-transform:uppercase;letter-spacing:3px}
+
+/* Tool cards */
+.tool-card{
+  background:#08080e;border:1px solid #1a1a2e;padding:20px 24px;
+  cursor:pointer;transition:all .2s;position:relative;overflow:hidden;
+  margin-bottom:10px;
+}
+.tool-card:hover{background:#0a0a12;border-color:#00ff4488}
+.tool-card:hover .scanline-card{opacity:1}
+.scanline-card{
+  position:absolute;inset:0;opacity:0;transition:opacity .2s;pointer-events:none;
+  background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,255,68,0.015) 2px,rgba(0,255,68,0.015) 4px);
+}
+.tool-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;flex-wrap:wrap;gap:8px}
+.tool-name-row{display:flex;align-items:center;gap:12px}
+.tool-num{color:#00ff44;font-size:13px;font-weight:700}
+.tool-name{color:#e0e0e0;font-size:15px;font-weight:700;letter-spacing:.5px}
+.tool-tag{font-size:10px;color:#0a0a12;background:#00ff44;padding:2px 6px;font-weight:700;letter-spacing:.5px}
+.tool-status{font-size:10px;color:#00ff44;border:1px solid #00ff4444;padding:2px 8px;letter-spacing:1px}
+.tool-desc{color:#7a7a8e;font-size:13px;line-height:1.6;margin-bottom:14px}
+.tool-footer{display:flex;justify-content:space-between;align-items:center;border-top:1px solid #1a1a2e;padding-top:10px;font-size:11px;flex-wrap:wrap;gap:6px}
+.tool-footer .lbl{color:#4a4a5e}
+.tool-footer .tech{color:#00aaff}
+.tool-footer .src{color:#00ff4488}
+
+/* About box */
+.about-box{background:#08080e;border:1px solid #1a1a2e;padding:20px 24px;margin-bottom:24px;font-size:12px;line-height:1.7}
+.about-box .bracket{color:#00ff44;font-size:11px;letter-spacing:2px}
+.about-box .body{color:#7a7a8e;margin:12px 0}
+
+/* Links / Donate */
+.bottom-row{display:flex;justify-content:space-between;align-items:flex-start;gap:24px;margin-bottom:32px;flex-wrap:wrap}
+.bottom-row .col-label{color:#4a4a5e;font-size:10px;letter-spacing:2px;margin-bottom:8px}
+.link-bracket{color:#4a4a5e}
+.donate-text{font-size:11px;color:#7a7a8e}
+.btc-box{
+  margin-top:8px;padding:8px 12px;background:#0a0a12;border:1px solid #1a1a2e;
+  font-size:10px;color:#ff9900;word-break:break-all;
+}
+
+/* Footer */
+.footer{text-align:center;font-size:11px;color:#2a2a3e;line-height:1.8}
+.footer .site{color:#00ff4444}
+.footer .quote{font-size:10px}
+
+/* Hit counter */
+.counter-wrap{text-align:center;margin-top:24px}
+.counter-label{font-size:10px;color:#2a2a3e;letter-spacing:2px;text-transform:uppercase;margin-bottom:8px}
+.counter-box{
+  display:inline-flex;gap:2px;padding:6px 10px;background:#020204;
+  border:1px solid #1a1a2e;border-top:2px solid #0a0a12;border-left:2px solid #0a0a12;
+  border-bottom:2px solid #2a2a3e;border-right:2px solid #2a2a3e;
+}
+.counter-digit{
+  width:20px;height:28px;background:#0a0a0e;border:1px solid #1a1a2e;
+  display:flex;align-items:center;justify-content:center;
+  font-size:18px;font-weight:700;color:#00ff44;text-shadow:0 0 6px #00ff4455;
+}
+.counter-since{font-size:9px;color:#1a1a2e;margin-top:6px}
+
+/* Responsive */
+@media(max-width:500px){
+  .ascii-logo{font-size:9px;letter-spacing:.5px}
+  .tool-header{flex-direction:column;align-items:flex-start}
+  .tool-footer{flex-direction:column;align-items:flex-start}
+  .bottom-row{flex-direction:column}
+}
+</style>
+</head>
+<body>
+
+<div class="scanline-sweep"></div>
+<div class="scanline-static"></div>
+<div class="vignette"></div>
+
+<div class="content">
+
+  <!-- ASCII Logo -->
+  <pre class="ascii-logo">
+╦═╗╦╔═╗╔═╗╔═╗╦═╗  ╔╦╗╔═╗╔═╗╦  ╔═╗
+╠╦╝║╠═╝╠═╝║╣ ╠╦╝   ║ ║ ║║ ║║  ╚═╗
+╩╚═╩╩  ╩  ╚═╝╩╚═   ╩ ╚═╝╚═╝╩═╝╚═╝
+▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀
+  [ FREE TOOLS / NO BLOAT ]
+  </pre>
+
+  <!-- Divider -->
+  <div class="divider" style="margin-bottom:4px">═══════════════════════════════════════════════════════════════════════════════</div>
+
+  <!-- Typed tagline -->
+  <div class="typed-line">
+    <span class="prompt">C:\RIPPER&gt; </span><span id="typed"></span><span class="cursor">█</span>
+  </div>
+
+  <!-- Thin divider -->
+  <div class="divider-thin" style="margin-bottom:32px">───────────────────────────────────────────────────────────────────────────────</div>
+
+  <!-- Section header -->
+  <div class="section-hdr" style="animation:fadeSlideIn .4s ease .25s both">
+    <span class="bracket">┌──</span>
+    <span class="label">Available Tools</span>
+    <span class="bracket">──────────────────────────────────┐</span>
+  </div>
+
+  <!-- Tool 1 -->
+  <div class="tool-card" style="animation:fadeSlideIn .4s ease .3s both" onclick="window.open('https://github.com/RipperMercs/ripper-tools','_blank')">
+    <div class="scanline-card"></div>
+    <div class="tool-header">
+      <div class="tool-name-row">
+        <span class="tool-num">[01]</span>
+        <span class="tool-name">Mining Hardware Monitor</span>
+        <span class="tool-tag">v1.0</span>
+      </div>
+      <span class="tool-status">ACTIVE</span>
+    </div>
+    <div class="tool-desc">Real-time monitoring for solo Bitcoin miners on CKPool. Track hashrate, worker status, and get instant alerts when you hit a block. Built for NerdOctaxe and BitAxe hobby miners.</div>
+    <div class="tool-footer">
+      <span><span class="lbl">TECH: </span><span class="tech">React Native / Expo / Firebase</span></span>
+      <span><span class="lbl">SRC: </span><span class="src">github.com/RipperMercs/ripper-tools</span></span>
+    </div>
+  </div>
+
+  <!-- Tool 2 -->
+  <div class="tool-card" style="animation:fadeSlideIn .4s ease .42s both" onclick="window.open('https://github.com/RipperMercs','_blank')">
+    <div class="scanline-card"></div>
+    <div class="tool-header">
+      <div class="tool-name-row">
+        <span class="tool-num">[02]</span>
+        <span class="tool-name">Background Remover</span>
+        <span class="tool-tag">v1.0</span>
+      </div>
+      <span class="tool-status">ACTIVE</span>
+    </div>
+    <div class="tool-desc">Drop an image, get a clean cutout. No uploads to sketchy servers. Fast, local processing. Removes backgrounds from photos with clean edge detection.</div>
+    <div class="tool-footer">
+      <span><span class="lbl">TECH: </span><span class="tech">Python</span></span>
+      <span><span class="lbl">SRC: </span><span class="src">github.com/RipperMercs</span></span>
+    </div>
+  </div>
+
+  <!-- Tool 3 -->
+  <div class="tool-card" style="animation:fadeSlideIn .4s ease .54s both" onclick="window.open('https://github.com/RipperMercs','_blank')">
+    <div class="scanline-card"></div>
+    <div class="tool-header">
+      <div class="tool-name-row">
+        <span class="tool-num">[03]</span>
+        <span class="tool-name">GIF to MP4 Converter</span>
+        <span class="tool-tag">v1.0</span>
+      </div>
+      <span class="tool-status">ACTIVE</span>
+    </div>
+    <div class="tool-desc">Batch convert GIFs to MP4 with zero quality loss. Drag and drop. No file size limits. No watermarks. Just works.</div>
+    <div class="tool-footer">
+      <span><span class="lbl">TECH: </span><span class="tech">FFmpeg / Python</span></span>
+      <span><span class="lbl">SRC: </span><span class="src">github.com/RipperMercs</span></span>
+    </div>
+  </div>
+
+  <!-- Divider -->
+  <div class="divider-thin" style="margin:24px 0">───────────────────────────────────────────────────────────────────────────────</div>
+
+  <!-- About -->
+  <div class="about-box" style="animation:fadeSlideIn .4s ease .6s both">
+    <div class="bracket">┌── ABOUT ──────────────────────────────────────┐</div>
+    <div class="body">
+      Solo dev. Oldschool gamer. Former guild leader of legends.<br>
+      Building small, useful tools that solve real problems in my daily workflow.<br>
+      Everything here is free. No accounts. No telemetry. No BS.
+    </div>
+    <div class="bracket">└────────────────────────────────────────────────┘</div>
+  </div>
+
+  <!-- Links / Donate -->
+  <div class="bottom-row">
+    <div>
+      <div class="col-label">LINKS</div>
+      <div style="font-size:12px">
+        <span class="link-bracket">[</span><a href="https://github.com/RipperMercs" target="_blank" rel="noopener">GitHub</a><span class="link-bracket">]</span>
+      </div>
+    </div>
+    <div>
+      <div class="col-label">SUPPORT</div>
+      <div class="donate-text">
+        These tools are free forever.<br>
+        If they saved you time, send sats:
+      </div>
+      <div class="btc-box">BTC: bc1q...your_address_here</div>
+    </div>
+  </div>
+
+  <!-- Final divider -->
+  <div class="divider" style="margin-bottom:12px">═══════════════════════════════════════════════════════════════════════════════</div>
+
+  <!-- Footer -->
+  <div class="footer">
+    <span class="site">ripper.tools</span> · est. 2026 · RipperMercs<br>
+    <span class="quote">"If it doesn't help my workflow, it doesn't ship."</span>
+  </div>
+
+  <!-- Hit Counter -->
+  <div class="counter-wrap">
+    <div class="counter-label">You are visitor number</div>
+    <div class="counter-box" id="counter-digits"></div>
+    <div class="counter-since">since 2026</div>
+  </div>
+
+</div>
+
+<script>
+// Typing animation
+const text = "Free tools. No bloat. No tracking. Just utility.";
+const el = document.getElementById("typed");
+let i = 0;
+const typeInterval = setInterval(() => {
+  if (i <= text.length) { el.textContent = text.slice(0, i); i++; }
+  else clearInterval(typeInterval);
+}, 35);
+
+// Hit counter display
+function renderCounter(num) {
+  const digits = String(num).padStart(7, "0");
+  const box = document.getElementById("counter-digits");
+  box.innerHTML = "";
+  for (const d of digits) {
+    const div = document.createElement("div");
+    div.className = "counter-digit";
+    div.textContent = d;
+    box.appendChild(div);
+  }
+}
+
+// For GitHub Pages, use localStorage as a simple view counter
+// (In production you'd use a tiny backend or service like countapi)
+let views = parseInt(localStorage.getItem("ripper-tools-views") || "0");
+views++;
+localStorage.setItem("ripper-tools-views", String(views));
+renderCounter(views);
+</script>
+
+</body>
+</html>
